@@ -4,6 +4,12 @@ import email
 import yaml
 import openai
 
+# Added Logging Module
+import logging
+logging.basicConfig(
+    format='%(asctime)s %(clientip)-15s %(user)-8s %(message)s',
+    Handlers=logging.StreamHandlers()
+)
 
 # user dfined : variables
 # how_many = int(input()) # how many unseen mails you want to check
@@ -57,15 +63,15 @@ for msg in msgs[::-1]:
     for response_part in msg:
         if type(response_part) is tuple:
             my_msg=email.message_from_bytes((response_part[1]))
-            print("_________________________________________")
-            #print ("subj:", my_msg['subject'])
-            #print ("from:", my_msg['from'])
-            #print ("body:")
+            logging.info("_________________________________________")
+            #logging.info ("subj:", my_msg['subject'])
+            #logging.info ("from:", my_msg['from'])
+            #logging.info ("body:")
             
             for part in my_msg.walk():  
-                #print(part.get_content_type())
+                #logging.info(part.get_content_type())
                 if part.get_content_type() == 'text/plain':
-                    print (part.get_payload())
+                    logging.info (part.get_payload())
 
                     snippet = part.get_payload()
                     # prompt = f"{what_to_ask} {str(snippet)}:
@@ -82,6 +88,6 @@ for msg in msgs[::-1]:
                         presence_penalty=0
                     )
                     
-                    #printing the response
+                    #logging.infoing the response
                     generated_text = response['choices'][0]['text']
-                    print(generated_text)
+                    logging.info(generated_text)
